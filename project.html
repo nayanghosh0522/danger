@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Danger Alert</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: black;
+      color: red;
+      text-align: center;
+      overflow-x: hidden;
+    }
+
+    header {
+      padding: 20px;
+      font-size: 2em;
+      background: darkred;
+      color: white;
+    }
+
+    .warning {
+      margin: 40px auto;
+      padding: 20px;
+      max-width: 500px;
+      background: #222;
+      border: 3px solid red;
+      border-radius: 12px;
+      box-shadow: 0 0 20px red;
+    }
+
+    .warning h2 {
+      font-size: 2em;
+      margin: 0;
+      animation: blink 1s infinite;
+    }
+
+    @keyframes blink {
+      0% { opacity: 1; }
+      50% { opacity: 0; }
+      100% { opacity: 1; }
+    }
+
+    /* Mobile-friendly */
+    @media (max-width: 600px) {
+      header {
+        font-size: 1.5em;
+      }
+      .warning {
+        margin: 20px;
+        padding: 15px;
+      }
+    }
+
+    canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      pointer-events: none;
+    }
+  </style>
+</head>
+<body>
+  <header>⚠️ Danger Zone ⚠️</header>
+
+  <div class="warning">
+    <h2>Warning!</h2>
+    <p>This is a test danger alert page.</p>
+  </div>
+
+  <canvas id="confetti"></canvas>
+
+  <script>
+    // Red confetti animation
+    const canvas = document.getElementById('confetti');
+    const ctx = canvas.getContext('2d');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    const confettiPieces = [];
+    const colors = ['red', 'darkred', 'orange'];
+
+    function ConfettiPiece() {
+      this.x = Math.random() * canvas.width;
+      this.y = Math.random() * canvas.height - canvas.height;
+      this.size = Math.random() * 8 + 2;
+      this.color = colors[Math.floor(Math.random() * colors.length)];
+      this.speed = Math.random() * 3 + 2;
+    }
+
+    ConfettiPiece.prototype.update = function() {
+      this.y += this.speed;
+      if (this.y > canvas.height) {
+        this.y = -10;
+        this.x = Math.random() * canvas.width;
+      }
+    };
+
+    ConfettiPiece.prototype.draw = function() {
+      ctx.fillStyle = this.color;
+      ctx.beginPath();
+      ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+      ctx.fill();
+    };
+
+    function initConfetti() {
+      for (let i = 0; i < 100; i++) {
+        confettiPieces.push(new ConfettiPiece());
+      }
+    }
+
+    function animateConfetti() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      confettiPieces.forEach(piece => {
+        piece.update();
+        piece.draw();
+      });
+      requestAnimationFrame(animateConfetti);
+    }
+
+    initConfetti();
+    animateConfetti();
+
+    window.addEventListener('resize', () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    });
+  </script>
+</body>
+</html>
